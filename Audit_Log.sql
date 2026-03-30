@@ -1,4 +1,5 @@
-CREATE TABLE Audit_Log (
+USE my_app_db;
+CREATE TABLE IF NOT EXISTS Audit_Log (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NULL, -- Changed to NULL to allow keeping logs of deleted users
     action_type ENUM(

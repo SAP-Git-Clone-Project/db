@@ -1,4 +1,5 @@
-CREATE TABLE User_Roles (
+USE my_app_db;
+CREATE TABLE IF NOT EXISTS User_Roles (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,

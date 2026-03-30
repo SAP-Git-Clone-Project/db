@@ -1,4 +1,5 @@
-CREATE TABLE Documents (
+USE my_app_db;
+CREATE TABLE IF NOT EXISTS Documents (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     created_by BIGINT NOT NULL,
     title VARCHAR(255) NOT NULL,

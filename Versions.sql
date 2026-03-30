@@ -1,4 +1,5 @@
-CREATE TABLE Versions (
+USE my_app_db;
+CREATE TABLE IF NOT EXISTS Versions (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     document_id BIGINT NOT NULL,
     version_number INT NOT NULL,

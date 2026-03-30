@@ -1,4 +1,5 @@
-CREATE TABLE Reviews (
+USE my_app_db;
+CREATE TABLE IF NOT EXISTS Reviews (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     version_id BIGINT NOT NULL,
     reviewer_id BIGINT NOT NULL,
