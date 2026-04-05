@@ -231,15 +231,3 @@ CREATE INDEX idx_notifications_unread ON notifications (recipient_id) WHERE is_r
 | `idx_audit_log_timestamp` | `audit_log` | Fast descending time-ordered queries |
 | `idx_versions_document_active` | `versions` | Fast lookup of the single active version per document |
 | `idx_notifications_unread` | `notifications` | Fast unread notification counts per user |
-
----
-
-## Running Migrations
-
-```bash
-# Apply all migrations
-python manage.py migrate
-
-# Or apply the raw SQL schema directly
-psql $DATABASE_URL -f db/my_app_db.sql
-```
