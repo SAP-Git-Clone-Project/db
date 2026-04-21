@@ -3,20 +3,37 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 2. USERS TABLE (Primary Dependency)
-CREATE TABLE IF NOT EXISTS "users" (
-    "id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    "password" VARCHAR(128) NOT NULL,
-    "last_login" TIMESTAMP WITH TIME ZONE,
-    "is_superuser" BOOLEAN NOT NULL DEFAULT FALSE,
-    "username" VARCHAR(50) UNIQUE NOT NULL,
-    "email" VARCHAR(254) UNIQUE NOT NULL,
-    "first_name" VARCHAR(50) NOT NULL,
-    "last_name" VARCHAR(50) NOT NULL,
-    "avatar" VARCHAR(500) DEFAULT 'https://res.cloudinary.com/dbgpxmjln/image/upload/v1766143170/deafult-avatar_tyvazc.png',
-    "is_active" BOOLEAN NOT NULL DEFAULT TRUE,
-    "is_staff" BOOLEAN NOT NULL DEFAULT FALSE,
-    "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS `users` (
+    `id` VARCHAR(36) NOT NULL PRIMARY KEY,
+    `password` VARCHAR(128) NOT NULL,
+    `last_login` DATETIME(6) NULL,
+    `is_superuser` BOOLEAN NOT NULL DEFAULT 0,
+    `username` VARCHAR(50) NOT NULL UNIQUE,
+    `email` VARCHAR(254) NOT NULL UNIQUE,
+    `first_name` VARCHAR(50) NOT NULL,
+    `last_name` VARCHAR(50) NOT NULL,
+    `avatar` VARCHAR(500) DEFAULT 'https://res.cloudinary.com/dbgpxmjln/image/upload/v1766143170/deafult-avatar_tyvazc.png',
+    `is_active` BOOLEAN NOT NULL DEFAULT 1,
+    `is_staff` BOOLEAN NOT NULL DEFAULT 0,
+    `created_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    `updated_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
+);
+
+CREATE TABLE IF NOT EXISTS `user_roles` (
+    `id` VARCHAR(36) NOT NULL PRIMARY KEY,
+    `role` VARCHAR(20) NOT NULL DEFAULT 'VIEWER',
+    `user_id` VARCHAR(36) NOT NULL UNIQUE,
+    `assigned_by_id` VARCHAR(36) NULL,
+    `assigned_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    `updated_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+
+    -- (OneToOne)
+    CONSTRAINT `fk_user_role_user` 
+        FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) 
+        ON DELETE CASCADE,
+    CONSTRAINT `fk_user_role_assigned_by` 
+        FOREIGN KEY (`assigned_by_id`) REFERENCES `users` (`id`) 
+        ON DELETE SET NULL
 );
 
 -- 3. DOCUMENTS TABLE
