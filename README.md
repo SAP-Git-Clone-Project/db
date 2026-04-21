@@ -81,6 +81,69 @@ The central table. All other tables reference it.
 
 ---
 
+### `roles`
+
+A lookup table of named system roles. Each role has a fixed name and an optional description. The set of valid roles is constrained to the four choices defined in the model.
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | UUID (PK) | Auto-generated |
+| `role_name` | VARCHAR(50) | Unique — `author` / `reviewer` / `reader` / `administrator` |
+| `description` | TEXT | Optional human-readable description of the role |
+
+**Role definitions:**
+
+| Role | Intended for |
+|---|---|
+| `author` | Users who create and upload documents |
+| `reviewer` | Users who review and approve/reject versions |
+| `reader` | Users with read-only access |
+| `administrator` | Users with elevated system-level privileges |
+
+> `role_name` is unique — there is exactly one row per role type. This table is effectively a seed table: rows are created once and referenced by `user_roles`.
+
+---
+
+### `user_roles`
+
+A join table that assigns one or more roles to a user. A user can hold multiple roles simultaneously (e.g. both `author` and `reviewer`), and each assignment records who granted it and when.
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | UUID (PK) | Auto-generated |
+| `user_id` | UUID (FK → users) | The user being assigned a role — CASCADE |
+| `role_id` | UUID (FK → roles) | The role being assigned — CASCADE |
+| `assigned_by_id` | UUID (FK → users) | Who granted this role — SET NULL on delete |
+| `assigned_at` | TIMESTAMP TZ | Auto-set at creation |
+
+**Constraint:** `(user_id, role_id)` is **unique** — a user cannot be assigned the same role twice.
+
+> `assigned_by_id` uses SET NULL so that role assignment history is preserved even if the admin who granted the role is later deleted.
+
+---
+
+Represents a document managed in the system. Supports **soft delete** — rows are never actually removed, just flagged.
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | UUID (PK) | Auto-generated |
+| `title` | VARCHAR(128) | — |
+| `created_by_id` | UUID (FK → users) | On delete: CASCADE |
+| `is_deleted` | BOOLEAN | `false` by default — soft delete flag |
+| `created_at` / `updated_at` | TIMESTAMP TZ | Auto-managed |
+
+**Constraint:** A user cannot have two active (non-deleted) documents with the same title. This is enforced via a **partial unique index**:
+
+```sql
+CREATE UNIQUE INDEX unique_user_active_title
+ON documents (created_by_id, title)
+WHERE is_deleted = FALSE;
+```
+
+**Note on creation:** When a document is created, the owner is automatically granted `DELETE` permission via a database transaction — ensuring the document and its permission always exist together or not at all.
+
+---
+
 ### `documents`
 
 Represents a document managed in the system. Supports **soft delete** — rows are never actually removed, just flagged.
