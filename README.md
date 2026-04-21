@@ -50,12 +50,14 @@ SECRET_KEY=your-secret-key
 
 ```
 users
- ├── documents          (created_by → users)
- │    ├── versions      (document → documents, created_by → users, parent_version → versions)
- │    │    └── reviews  (version → versions, reviewer → users)
+ ├── roles                (via user_roles — many-to-many)
+ │    └── user_roles      (user → users, role → roles, assigned_by → users)
+ ├── documents            (created_by → users)
+ │    ├── versions        (document → documents, created_by → users, parent_version → versions)
+ │    │    └── reviews    (version → versions, reviewer → users)
  │    └── document_permissions  (document → documents, user → users)
- └── audit_log          (user, document, version — all nullable FKs)
- └── notifications      (recipient, actor → users, target_document → documents)
+ └── audit_log            (user, document, version — all nullable FKs)
+ └── notifications        (recipient, actor → users, target_document → documents)
 ```
 
 ---
