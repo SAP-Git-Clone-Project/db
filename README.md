@@ -61,7 +61,7 @@ users
 ```
 ---
 
-### Er-Diagram
+### ER Diagram
 ![ER Diagram](er-diagram.png)
 
 ---
