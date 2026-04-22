@@ -59,6 +59,10 @@ users
  └── audit_log            (user, document, version — all nullable FKs)
  └── notifications        (recipient, actor → users, target_document → documents)
 ```
+---
+
+### Er-Diagram
+![ER Diagram](./docs/er-diagram.png)
 
 ---
 
